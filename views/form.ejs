@@ -1,0 +1,19 @@
+<%- include("template/head", {titlePath: "desafio ejs index"}) %>
+<body>
+    <h1>Desafio Coderhouse</h1>
+    <div class="container">        
+        <h2> Complete el formulario para cargar productos </h2>
+        <form 
+            action="/api/productos" 
+            method="post" 
+            enctype="multipart/form-data"
+        >
+            Titulo: <input name="title" placeholder="Titulo"> <br>
+            Precio: <input name="price" type="number" placeholder="Precio"> <br>
+            Imagen: <input name="thumbnail" type="file"/> <br>
+            <br><button type="submit"> ENVIAR! </button>
+        </form>
+        <a href="/productList">Ver lista de productos</a>
+    </div>
+</body>
+</html>
