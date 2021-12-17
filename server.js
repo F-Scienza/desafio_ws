@@ -1,37 +1,75 @@
-const express = require('express')
-const { Server: HttpServer } = require('http')
-const { Server: IOServer } = require('socket.io')
+const express = require('express');
+const Contenedor = require('./contenedor');
+const multer = require('multer');
+const { Router } = express;
 
-const app = express()
-const httpServer = new HttpServer(app)
-const io = new IOServer(httpServer)
+const app = express();
+const router = Router();
 
-//  indicamos ruta de archivos estaticos
-app.use(express.static('./public'))
+app.use(express.json());
+app.use(
+	express.urlencoded({
+		extended: true,
+	})
+);
 
-//  para probar creamos un array de mensajes que vamos a 
-//  enviar cuando se conecte un cliente web
-const messages = [
-    { author: "Cufa", text: "Hola we!" },
-];
+// 	seteamos la carpeta views y el engine
+app.set('views', './views');
+app.set('view engine', 'ejs');
 
-//  servidor escuchando puerto 3000 de localhost
-httpServer.listen(3000, function () {
-	console.log('Server running...' );
+const productos = new Contenedor(__dirname + '/data/productos.json');
+productos.init();
+
+// seteamos el file con multer
+const storage = multer.diskStorage({
+	destination: function (req, file, cb) {
+		cb(null, 'uploads');
+	},
+	filename: function (req, file, cb) {
+		cb(null, file.originalname);
+	},
 });
 
-//  el servidor de websocket espera la conexion
-//  y en emit enviamos el array
-//  CONNECTION ES OBLIGATORIO 
-io.on('connection', function(socket){
-    console.log('un cliente se ha conectado')
-    socket.emit('messages', messages);
+const upload = multer({ storage });
+app.use('/files', express.static('uploads'));
 
-    // escuchamos el evento new-message, recibimos data
-    // y lo agregamos al array messages
-    socket.on('new-message', data => {
-			messages.push(data);
-			io.sockets.emit('messages', messages);
-		});
+router.get('/', (req, res) => {
+	return res.json(productos.productList);
+});
+router.get('/:id', async (req, res) => {
+	let id = req.params.id; //leemos lo que pasó por url el usuario
+	return res.json(await productos.getById(id));
+});
 
-})
+//	usamos multer para guardar las imagenes
+router.post('/', upload.single('thumbnail'), async (req, res) => {
+	let obj = req.body;
+	obj.thumbnail = '/files/' + req.file.filename;
+	await productos.addProduct(obj); // usamos el metodo save
+	return res.redirect('/productList'); //redireccionamos a lista
+});
+
+router.put('/:id', (req, res) => {
+	let obj = req.body;
+	let id = req.params.id;
+	return res.json(productos.update(id, obj));
+});
+
+app.use('/api/productos/', router);
+
+//	mostramos el formulario
+app.get('/', (req, res) => {
+	return res.render('form');
+});
+
+// 	publicamos la carpeta upload
+app.use(express.static('uploads'));
+app.use(express.static(__dirname + '/public'));
+
+app.get('/productList', (req, res) => {
+	return res.render('productList.ejs', {
+		productos: productos.productList,
+	});
+});
+
+app.listen(8080);
