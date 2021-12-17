@@ -2,9 +2,13 @@ const express = require('express');
 const Contenedor = require('./contenedor');
 const multer = require('multer');
 const { Router } = express;
+const { Server: HttpServer } = require('http');
+const { Server: IOServer } = require('socket.io');
 
 const app = express();
 const router = Router();
+const httpServer = new HttpServer(app);
+const io = new IOServer(httpServer);
 
 app.use(express.json());
 app.use(
@@ -32,6 +36,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 app.use('/files', express.static('uploads'));
+// 	publicamos la carpeta upload
+app.use(express.static('uploads'));
+app.use(express.static(__dirname + '/public'));
 
 router.get('/', (req, res) => {
 	return res.json(productos.productList);
@@ -62,9 +69,6 @@ app.get('/', (req, res) => {
 	return res.render('form');
 });
 
-// 	publicamos la carpeta upload
-app.use(express.static('uploads'));
-app.use(express.static(__dirname + '/public'));
 
 app.get('/productList', (req, res) => {
 	return res.render('productList.ejs', {
@@ -72,4 +76,7 @@ app.get('/productList', (req, res) => {
 	});
 });
 
+io.on('connection', function (socket) {
+	console.log('un cliente se ha conectado');
+});
 app.listen(8080);
