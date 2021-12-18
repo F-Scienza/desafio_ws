@@ -1,29 +1,35 @@
 const express = require('express');
 const Contenedor = require('./contenedor');
 const multer = require('multer');
+const path = require('path')
+const http = require('http');
 const { Router } = express;
-const { Server: HttpServer } = require('http');
-const { Server: IOServer } = require('socket.io');
 
+/////////////////////////////////////////////////////
+// express server
 const app = express();
-const router = Router();
-const httpServer = new HttpServer(app);
-const io = new IOServer(httpServer);
+const httpServer = http.Server(app);
+httpServer.listen(8080, ()=>{
+	console.log('server on: 8080')
+});
 
 app.use(express.json());
-app.use(
-	express.urlencoded({
-		extended: true,
-	})
-);
+app.use(express.urlencoded({extended: true}));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/files', express.static('uploads'));
+app.use(express.static('uploads'));
 
+/////////////////////////////////////////////////////
 // 	seteamos la carpeta views y el engine
-app.set('views', './views');
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+/////////////////////////////////////////////////////
+// inicializamos productos
 const productos = new Contenedor(__dirname + '/data/productos.json');
 productos.init();
 
+/////////////////////////////////////////////////////
 // seteamos el file con multer
 const storage = multer.diskStorage({
 	destination: function (req, file, cb) {
@@ -33,12 +39,21 @@ const storage = multer.diskStorage({
 		cb(null, file.originalname);
 	},
 });
-
 const upload = multer({ storage });
-app.use('/files', express.static('uploads'));
-// 	publicamos la carpeta upload
-app.use(express.static('uploads'));
-app.use(express.static(__dirname + '/public'));
+
+//	mostramos el formulario
+app.get('/', (req, res) => {
+	res.sendFile('index.html', { root: __dirname });
+});
+app.get('/productList', (req, res) => {
+	return res.render('productList.ejs', {
+		productos: productos.productList,
+	});
+});
+
+/////////////////////////////////////////////////////
+// 	Router
+const router = Router();
 
 router.get('/', (req, res) => {
 	return res.json(productos.productList);
@@ -47,7 +62,7 @@ router.get('/:id', async (req, res) => {
 	let id = req.params.id; //leemos lo que pasó por url el usuario
 	return res.json(await productos.getById(id));
 });
-
+/*
 //	usamos multer para guardar las imagenes
 router.post('/', upload.single('thumbnail'), async (req, res) => {
 	let obj = req.body;
@@ -61,22 +76,22 @@ router.put('/:id', (req, res) => {
 	let id = req.params.id;
 	return res.json(productos.update(id, obj));
 });
-
+*/
 app.use('/api/productos/', router);
 
-//	mostramos el formulario
-app.get('/', (req, res) => {
-	return res.render('form');
-});
+/////////////////////////////////////////////////////
+// web sockets
 
+const io = require('socket.io');
+const wsServer = io(httpServer);
 
-app.get('/productList', (req, res) => {
-	return res.render('productList.ejs', {
-		productos: productos.productList,
-	});
-});
+let users = [];
 
-io.on('connection', function (socket) {
-	console.log('un cliente se ha conectado');
-});
-app.listen(8080);
+wsServer.on('connection', (socket) => {
+	users.push(socket);
+	console.log('Usuario conectado. Total: ' + users.length)
+	socket.on('disconnect', () => {
+		users = users.splice(1, 1);
+		console.log('Usuario desconectado. Total: ' + users.length);
+	})
+})
