@@ -1,34 +1,43 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>desafio 6</title>
-    <link href="./css/styles.css" rel="stylesheet" type="text/css">
-</head>
-<body> 
-    <h1>Desafio Coderhouse</h1>
-    <div class="container">        
-        <h2> Complete el formulario para cargar productos </h2>
-        <form  class="form"
-            action="/api/productos" 
-            method="post" 
-            enctype="multipart/form-data"
-        >
-                <p>Nombre de producto</p>
-                <input name="title" placeholder="Titulo"> <br>
-                <p>Precio</p>
-                <input name="price" type="number" placeholder="Precio"> <br>
-                <p>Inserte una imagen</p>
-                <input name="thumbnail" type="file"/> <br>
-                <br><button type="submit"> ENVIAR! </button>
-        </form>
-        <a href="/productList">Ver lista de productos</a>
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>desafio 6</title>
+		<link href="./css/styles.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<h1>Desafio Coderhouse</h1>
+		<div class="container">
+			<h2>Complete el formulario para cargar productos</h2>
+			<form
+				class="form"
+				action="/api/productos"
+				method="post"
+				enctype="multipart/form-data"
+			>
+				<p>Nombre de producto</p>
+				<input name="title" placeholder="Titulo" /> <br />
+				<p>Precio</p>
+				<input name="price" type="number" placeholder="Precio" /> <br />
+				<p>Inserte una imagen</p>
+				<input name="thumbnail" type="file" /> <br />
+				<br /><button type="submit">ENVIAR!</button>
+			</form>
+			<a href="/productList">Ver lista de productos</a>
+            <table >
+                <tr>
+                    <th>Titulo</th>
+                    <th>Precio</th>
+                    <th>Imagen</th>
+                </tr>
+            </table>
+            <table id="live-products">
 
-        <div class="live-products" id="live-products"></div>
-    </div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/main.js"></script>
-</body>
+            </table>	
+		</div>
+		<script src="/socket.io/socket.io.js"></script>
+		<script src="/main.js"></script>
+	</body>
 </html>

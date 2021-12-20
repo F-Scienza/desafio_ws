@@ -94,4 +94,7 @@ wsServer.on('connection', (socket) => {
 		users = users.splice(1, 1);
 		console.log('Usuario desconectado. Total: ' + users.length);
 	})
+
+	const productList = productos.productList
+	socket.emit('products', productList);
 })
