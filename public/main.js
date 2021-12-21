@@ -1,9 +1,11 @@
 const socket = io.connect();
+
+fetch('/api/productos/')
+	.then(response => response.json())
+	.then(data => console.log(data));
+
 socket.on('products', data => {
 	render(data);
-	data.map(prod => {
-		console.log(prod);
-	});
 });
 
 function render(data) {

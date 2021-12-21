@@ -62,7 +62,7 @@ router.get('/:id', async (req, res) => {
 	let id = req.params.id; //leemos lo que pasó por url el usuario
 	return res.json(await productos.getById(id));
 });
-/*
+
 //	usamos multer para guardar las imagenes
 router.post('/', upload.single('thumbnail'), async (req, res) => {
 	let obj = req.body;
@@ -76,7 +76,7 @@ router.put('/:id', (req, res) => {
 	let id = req.params.id;
 	return res.json(productos.update(id, obj));
 });
-*/
+
 app.use('/api/productos/', router);
 
 /////////////////////////////////////////////////////
