@@ -13,16 +13,14 @@
 			<h2>Complete el formulario para cargar productos</h2>
 			<form
 				class="form"
-				action="/api/productos"
-				method="post"
-				enctype="multipart/form-data"
+				onsubmit="submitForm(event)"
 			>
 				<p>Nombre de producto</p>
-				<input name="title" placeholder="Titulo" /> <br />
+				<input id="title" name="title" placeholder="Titulo" /> <br />
 				<p>Precio</p>
-				<input name="price" type="number" placeholder="Precio" /> <br />
+				<input id="price" name="price" type="number" placeholder="Precio" /> <br />
 				<p>Inserte una imagen</p>
-				<input name="thumbnail" type="file" /> <br />
+				<input id="thumbnail" name="thumbnail" type="file" /> <br />
 				<br /><button type="submit">ENVIAR!</button>
 			</form>
 			<a href="/productList">Ver lista de productos</a>

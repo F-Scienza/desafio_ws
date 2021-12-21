@@ -8,6 +8,27 @@ socket.on('products', data => {
 	render(data);
 });
 
+let productTitle 
+let productPrice
+let productThumbnail
+
+function createProduct(){
+	const productDetails = {
+		title: productTitle,
+		price: productPrice,
+		thumbnail: productThumbnail,
+	}
+	socket.emit('addproduct', productDetails)	
+}
+
+function submitForm(e){
+	e.preventDefault()
+    productTitle = document.getElementById('title').value;
+	productPrice = document.getElementById('price').value;
+	productThumbnail = document.getElementById('thumbnail').value;
+	createProduct();
+}
+
 function render(data) {
 	const html = data.map(prod=> {
 		return (`
