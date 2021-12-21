@@ -99,7 +99,7 @@ wsServer.on('connection', (socket) => {
 	socket.emit('products', productList);
 
 	socket.on('addproduct', async data => {
-		await productos.addProduct(data.title, data.price, data.thumbnail);
+		await productos.addProduct(data);
 		wsServer.emit('products', productList);
 	});
 })

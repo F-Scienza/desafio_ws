@@ -25,7 +25,7 @@ function submitForm(e){
 	e.preventDefault()
     productTitle = document.getElementById('title').value;
 	productPrice = document.getElementById('price').value;
-	productThumbnail = document.getElementById('thumbnail').value;
+	productThumbnail = document.getElementById('thumbnail');
 	createProduct();
 }
 
