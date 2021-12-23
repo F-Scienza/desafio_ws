@@ -30,7 +30,7 @@ function submitForm(e){
 }
 
 function render(data) {
-	const html = data.map(prod=> {
+	const html = data.map(prod=> {	
 		return (`
 			<tr>
 				<td>${prod.title}</td>

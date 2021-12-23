@@ -4,9 +4,14 @@ body{
     justify-content: center;
     align-items: center;
 }
+.container{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 .form{
-    width: 350px;
-    height: auto;
+    width: 260px;
+    height: 350px;
     border-radius: 6px;
     box-shadow: 0 0 20px -5px;
     margin: 15px auto;
@@ -31,12 +36,32 @@ button{
     color: black;
     transition: all .6s;
 }
+.list{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-left: 50px;
+}
 button:hover{
     color: white;
     background-color: rgba(0,0, 0, 1);
 }
-.live-products{
-    border: 2px solid red;
-    width: 100%;
+.prod-table{
+    width: 260px;
+    height: 350px;
+    border-radius: 6px;
+    padding: 10px;
+    overflow: scroll;
+}
+.head-table{
+    width: 260px;
     height: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 20px -5px;
+}
+.prod-table-container{
+    height: 300px;
+    overflow-y: scroll;
+    box-shadow: 0 0 20px -5px;
 }
