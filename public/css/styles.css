@@ -65,3 +65,9 @@ button:hover{
     overflow-y: scroll;
     box-shadow: 0 0 20px -5px;
 }
+.chat{
+    width: 450px;
+    height: 160px;
+    margin-right: 0;
+    box-shadow: 0 0 20px -5px;
+}
