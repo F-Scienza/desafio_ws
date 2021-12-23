@@ -2,11 +2,10 @@ const socket = io.connect();
 
 fetch('/api/productos/')
 	.then(response => response.json())
-	.then(data => console.log(data));
 
 socket.on('products', data => {
 	render(data);
-});
+}); 
 
 let productTitle 
 let productPrice
@@ -38,30 +37,36 @@ function render(data) {
 				<td><img src=${prod.thumbnail} width=70px/> </td>
 			</tr>
 		`)
-	});
+	}).join(' ')
 	document.getElementById('live-products').innerHTML = html;
 }
 
-
-// Escuchando el evento 'diego'
+// escuchamos message
 socket.on('message', data => {
-    data= `<br/> <span style="color:blue;font-weight:bold"> 
-	${data.user} </span> - <span style="color:darkolivegreen;font-weight:bold"> 
-	${data.date} </span> - <span style="color:black;font-weight:bold"> 
-	${data.message}</span>`;
-    $("#chat").append(data)
+	console.log(data)
+    chatRender(data)
 })
-    $('#btn').click(sendMessage);
+
+// 	funcion para renderizar el chat
+function chatRender(data){
+	const html = data.map(message =>{
+		return(
+			`	
+			<p>${message.user} [ ${message.date} ]: ${message.message}</p>
+			`
+		)
+	}).join(' ')
+	document.getElementById('chat').innerHTML = html;
+}
 
 // Emite mensaje al servidor
 
-function sendMessage() {
-    user= $("#user").val();
+function sendMessage(e) {
+	e.preventDefault()
     let msn = {
+        user: document.getElementById('user').value,
         date: new Date().toLocaleTimeString(),
-        message: $("#msn")[0].value,
-        user: user
+        message: document.getElementById('msg').value
     }
-    socket.emit("message", msn);
-    $("#msn")[0].value = "";
+    socket.emit("new-message", msn);
 }

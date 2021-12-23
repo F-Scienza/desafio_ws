@@ -32,14 +32,9 @@ productos.init();
 
 /////////////////////////////////////////////////////
 // mensaje de bienvenida
-
-const welcomeMessage = {
-	user: 'admin',
-	message: 'Hola que onda perrito malvado',
-	date: (fyh = new Date().toLocaleDateString()),
-};
-
-
+const msg = new Contenedor(__dirname + '/data/messages.json')
+msg.init()
+const messages = []
 /////////////////////////////////////////////////////
 // seteamos el file con multer
 const storage = multer.diskStorage({
@@ -108,7 +103,6 @@ wsServer.on('connection', (socket) => {
 	
 	const productList = productos.productList
 	socket.emit('products', productList)
-	socket.emit('message', welcomeMessage)
 	
 	socket.on('addproduct', async data => {
 		await productos.addProduct(data);
@@ -118,8 +112,16 @@ wsServer.on('connection', (socket) => {
 		console.log(data)
 		io.sockets.emit('message', data)
 	})
+	
+	
+	socket.emit('message', msg.productList)
+	socket.on('new-message', async (data) =>{
+        data.time = new Date().toLocaleTimeString()
+        data.date = new Date().toLocaleDateString()
+        await msg.save(data)
+        messages.push(data)
+		console.log(messages)
+        io.sockets.emit('messages', [data])
+    })
+
 })
-
-
-///////////////////////////////////////////
-// chat con el servidor 
